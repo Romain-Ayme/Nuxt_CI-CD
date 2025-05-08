@@ -29,6 +29,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Configuration de PNPM - déplacé AVANT la détection pour s'assurer que pnpm est disponible
+      - name: Configuration de PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Détecter le gestionnaire de paquets
         id: detect-package-manager
         run: |
@@ -48,23 +55,20 @@ jobs:
             echo "Impossible de déterminer le gestionnaire de paquets"
             exit 1
           fi
+
       - name: Configuration de Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           node-version-file: "package.json"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Configuration de PNPM
-        if: ${{ steps.detect-package-manager.outputs.manager == 'pnpm' }}
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-          run_install: true
+
       - name: Configuration de Pages
         uses: actions/configure-pages@v5
         with:
           # Injecte automatiquement base dans votre configuration Nuxt
           static_site_generator: nuxt
+
       - name: Restaurer le cache
         uses: actions/cache@v4
         with:
@@ -76,10 +80,13 @@ jobs:
           key: ${{ runner.os }}-nuxt-build-${{ hashFiles('package-lock.json') || hashFiles('yarn.lock') || hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-nuxt-build-
+
       - name: Installer les dépendances
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+
       - name: Générer le site statique avec Nuxt
         run: ${{ steps.detect-package-manager.outputs.manager }} run generate
+
       - name: Télécharger l'artefact
         uses: actions/upload-pages-artifact@v3
         with:
