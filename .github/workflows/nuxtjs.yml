@@ -33,8 +33,6 @@ jobs:
       # Configuration de PNPM
       - name: Configuration de PNPM
         uses: pnpm/action-setup@v4
-        with:
-          version: latest
 
       # Configuration de Node.js
       - name: Configuration de Node
