@@ -33,8 +33,6 @@ jobs:
       # Configuration de PNPM - déplacé AVANT la détection pour s'assurer que pnpm est disponible
       - name: Configuration de PNPM
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Détecter le gestionnaire de paquets
         id: detect-package-manager
