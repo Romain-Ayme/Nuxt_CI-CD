@@ -1,7 +1,5 @@
 # Workflow pour construire et déployer un site Nuxt 3 sur GitHub Pages
-#
-# Pour commencer avec Nuxt 3 voir: https://nuxt.com/docs/getting-started/introduction
-#
+
 name: Déployer le site Nuxt sur Pages
 
 on:
@@ -25,7 +23,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Tâche de construction
+  # Tâche de build
   build:
     runs-on: ubuntu-latest
     steps:
@@ -53,13 +51,14 @@ jobs:
       - name: Configuration de Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
+          node-version-file: "package.json"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
       - name: Configuration de PNPM
         if: ${{ steps.detect-package-manager.outputs.manager == 'pnpm' }}
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 10
           run_install: false
       - name: Configuration de Pages
         uses: actions/configure-pages@v5
